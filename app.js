@@ -1,20 +1,45 @@
 var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const mongoose = require('mongoose');
+const mqtt = require('mqtt');
+const bodyParser = require('body-parser');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 var app = express();
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//Conexion
+mongoose.connect('mongodb://localhost:27017/Electronica', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+const db = mongoose.connection;
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+db.on('error', console.error.bind(console, 'Error de conexión a MongoDB:'));
+db.once('open', () => {
+    console.log('Conectado a la base de datos MongoDB');
+});
+
+//Middleware
+app.use(bodyParser.json());
+
+
+//Routes
+const apiRoutes = require('./routes/api');
+const mqttRoutes = require('./routes/mqtt');
+
+app.use('/api', apiRoutes);
+app.use('/mqtt', mqttRoutes);
+
+
+//iniciar MQTT
+const mqttClient = mqtt.connect('mqtt://localhost:1883'); //Ejemplo hasta que sepamos cual es
+
+mqttClient.on('connect', () => {
+    console.log('Conectado al broker MQTT');
+})
+
+app.get('/' , (req, res) => {
+    res.send('Hello World!');
+});
+
 
 module.exports = app;
