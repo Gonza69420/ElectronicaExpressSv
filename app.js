@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 var app = express();
 
 //Conexion
-mongoose.connect('mongodb://localhost:27017/Electronica', {
+mongoose.connect('mongodb://localhost:27017/electronica', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -23,11 +23,13 @@ app.use(bodyParser.json());
 
 
 //Routes
-const apiRoutes = require('./routes/api');
+const adminRoutes = require('./routes/admin');
 const mqttRoutes = require('./routes/mqtt');
+const maintenanceRoutes = require('./routes/maintenance');
 
-app.use('/api', apiRoutes);
+app.use('/admin', adminRoutes);
 app.use('/mqtt', mqttRoutes);
+app.use('/maintenance', maintenanceRoutes);
 
 
 //iniciar MQTT
