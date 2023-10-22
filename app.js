@@ -18,15 +18,23 @@ db.once('open', () => {
 // Middleware
 app.use(bodyParser.json());
 
-// Routes
-const apiRoutes = require('./controllers/apiController');
-const mqttRoutes = require('./controllers/mqttController');
 
-app.use('/api', apiRoutes);
+//Routes
+const adminRoutes = require('./routes/admin');
+const mqttRoutes = require('./routes/mqtt');
+const maintenanceRoutes = require('./routes/maintenance');
 
-// Import the MQTT controller
-const mqttController = require('./controllers/mqttController');
-app.use('/mqtt', mqttRoutes(mqttController));
+app.use('/admin', adminRoutes);
+app.use('/mqtt', mqttRoutes);
+app.use('/maintenance', maintenanceRoutes);
+
+
+//iniciar MQTT
+const mqttClient = mqtt.connect('mqtt://localhost:1883'); //Ejemplo hasta que sepamos cual es
+
+mqttClient.on('connect', () => {
+    console.log('Conectado al broker MQTT');
+})
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
