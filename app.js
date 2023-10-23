@@ -20,9 +20,9 @@ app.use(bodyParser.json());
 
 
 //Routes
-const adminRoutes = require('./routes/admin');
+const adminRoutes = require('./routes/adminRoute');
 const mqttRoutes = require('./routes/mqtt');
-const maintenanceRoutes = require('./routes/maintenance');
+const maintenanceRoutes = require('./routes/maintenanceRoute');
 
 app.use('/admin', adminRoutes);
 app.use('/mqtt', mqttRoutes);

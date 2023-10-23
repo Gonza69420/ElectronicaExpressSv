@@ -1,15 +1,14 @@
 const moongose = require('mongoose');
 
 const roleSchema = new moongose.Schema({
-    id : Number,
     name : String,
 })
 
 
 const userSchema = new moongose.Schema({
-    id : Number,
     username : String,
     password : String,
+    name : String,
     role : roleSchema,
 })
 

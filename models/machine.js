@@ -6,11 +6,22 @@ const productQuantitySchema = new mongoose.Schema({
 })
 
 const machineSchema = new mongoose.Schema({
-    id : number,
-    works : boolean,
-    beingRepaired : boolean,
-    income : number,
-    products : [productQuantitySchema],
+    works : {
+        type : boolean,
+        default: false
+    },
+    beingRepaired : {
+        type : boolean,
+        default : false,
+    },
+    income : {
+        type : number,
+        default : 0,
+    },
+    products : {
+        type : [productQuantitySchema],
+        default : [],
+    },
 })
 
 module.exports.Machine = mongoose.model('Machine', machineSchema);
