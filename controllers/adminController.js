@@ -1,5 +1,6 @@
 const {Machine} = require("../models/machine");
 const { User , Role } = require("../models/user");
+const {Product } = require("../models/product");
 
 exports.addMachine = async (req, res) => {
     try{
@@ -127,5 +128,59 @@ exports.getTotalIncome = async (req, res) => {
         res.status(200).json({ totalIncome });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener el ingreso de las máquinas', error });
+    }
+}
+
+exports.adjustProductPrice = async (req, res) => {
+    try{
+        const {productId} = req.params;
+        const {newPrice} = req.body;
+
+        const product = await Product.findOne({_id : productId});
+
+        if (!product){
+            return res.status(404).json({error : "Product not found"});
+        }
+
+        product.price = newPrice;
+
+        await product.save();
+
+        res.status(200).json({message : "Product price adjusted successfully"});
+    } catch(err){
+        res.status(500).json({error : err.message});
+    }
+}
+
+exports.addProduct = async (req, res) => {
+    try{
+        const {name , price} = req.body;
+
+        const newProduct = new Product({
+            name,
+            price
+        });
+
+        const savedProduct = await newProduct.save();
+
+        res.status(201).json({message : "Product added successfully"}, savedProduct);
+    } catch(err){
+        res.status(500).json({error : err.message});
+    }
+}
+
+exports.deleteProduct = async (req, res) => {
+    try{
+        const {productId } = req.params;
+
+        const product = await Product.findByIdAndDelete(productId);
+
+        if (!product){
+            return res.status(404).json({error : "Product not found"});
+        }
+
+        res.status(200).json({message : "Product deleted successfully"});
+    } catch(err){
+        res.status(500).json({error : err.message});
     }
 }
