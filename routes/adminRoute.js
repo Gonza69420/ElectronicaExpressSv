@@ -10,4 +10,5 @@ router.post('/addMaintenanceStaff' , adminController.addMaintenanceStaff);
 router.post('/deleteMaintenanceStaff/:maintenanceId' , adminController.deleteMaintenanceStaff);
 router.get('/getMachine/:machineId' , adminController.getMachine);
 router.get('/getTotalIncome' , adminController.getTotalIncome);
+
 module.exports = router;
