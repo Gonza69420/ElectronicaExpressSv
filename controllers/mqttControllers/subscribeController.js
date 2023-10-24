@@ -46,17 +46,99 @@ exports.soldProduct = async (message) => {
 }
 
 exports.machineBroken = async (message) => {
-    console.log(`Machine broke: ${message}`);
+    try{
+        const jsonMessage = JSON.parse(message);
+
+        // message = {
+        //     machine: <Machine>
+        // }
+
+        const machine = await Machine.findOne({_id : jsonMessage.machine.id});
+
+        if (!machine){
+            throw new Error("Machine not found");
+        }
+
+        machine.works = true;
+
+        await machine.save();
+
+        console.log(`Machine broken`);
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 exports.machineWorking = async (message) => {
-    console.log(`Machine working: ${message}`);
+    try{
+        const jsonMessage = JSON.parse(message);
+
+        // message = {
+        //     machine: <Machine>
+        // }
+
+        const machine = await Machine.findOne({_id : jsonMessage.machine.id});
+
+        if (!machine){
+            throw new Error("Machine not found");
+        }
+
+        machine.works = true;
+
+        await machine.save();
+
+        console.log(`Machine working`);
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 exports.machineReady = async (message) => {
-    console.log(`Machine ready: ${message}`);
+    try{
+        const jsonMessage = JSON.parse(message);
+
+        // message = {
+        //     machine: <Machine>
+        // }
+
+        const machine = await Machine.findOne({_id : jsonMessage.machine.id});
+
+        if (!machine){
+            throw new Error("Machine not found");
+        }
+
+        machine.works = false;
+
+        await machine.save();
+
+        console.log(`Machine ready`);
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 exports.machineConnected = async (message) => {
-    console.log(`Machine connected: ${message}`);
+    try{
+        const jsonMessage = JSON.parse(message);
+
+        // message = {
+        //     machine: id
+        // }
+
+        const machine = await Machine.findOne({_id : jsonMessage.machineId});
+
+        if (!machine){
+            throw new Error("Machine not found");
+        }
+
+        machine.works = true;
+
+        await machine.save();
+
+        //pub Machine
+
+        console.log(`Machine connected`);
+    } catch (err) {
+        console.log(err);
+    }
 }
