@@ -1,6 +1,6 @@
 const { Machine } = require('../../models/machine');
 const { Product } = require('../../models/product');
-
+const publishController = require('../mqttControllers/publishController');
 exports.soldProduct = async (message) => {
     try{
         const jsonMessage = JSON.parse(message);
@@ -136,7 +136,7 @@ exports.machineConnected = async (message) => {
         await machine.save();
 
         //pub Machine
-
+        publishController.publishMessage(`machine/Connected/${machine.id}`, JSON.stringify(machine));
         console.log(`Machine connected`);
     } catch (err) {
         console.log(err);

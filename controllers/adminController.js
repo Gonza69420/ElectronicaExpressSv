@@ -1,6 +1,7 @@
 const {Machine} = require("../models/machine");
 const { User , Role } = require("../models/user");
 const {Product } = require("../models/product");
+const publishController = require('./mqttControllers/publishController');
 
 exports.addMachine = async (req, res) => {
     try{
@@ -25,6 +26,8 @@ exports.deleteMachine = async (req, res) => {
         }
 
         res.status(200).json({message : "Machine deleted successfully"});
+
+        publishController.publishMessage(`machine/delete/${machineId}` , `delete`);
     } catch(err){
         res.status(500).json({error : err.message});
     }
@@ -147,6 +150,8 @@ exports.adjustProductPrice = async (req, res) => {
         await product.save();
 
         res.status(200).json({message : "Product price adjusted successfully"});
+
+        publishController.publishMessage(`product/adjustPrice/${productId}` , `{newPrice}`);
     } catch(err){
         res.status(500).json({error : err.message});
     }
@@ -163,6 +168,8 @@ exports.addProduct = async (req, res) => {
 
         const savedProduct = await newProduct.save();
 
+        publishController.publishMessage(`product/add` , JSON.stringify(savedProduct));
+
         res.status(201).json({message : "Product added successfully"}, savedProduct);
     } catch(err){
         res.status(500).json({error : err.message});
@@ -178,6 +185,8 @@ exports.deleteProduct = async (req, res) => {
         if (!product){
             return res.status(404).json({error : "Product not found"});
         }
+
+        publishController.publishMessage(`product/delete/${productId}` , `delete`);
 
         res.status(200).json({message : "Product deleted successfully"});
     } catch(err){

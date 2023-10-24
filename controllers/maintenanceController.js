@@ -1,5 +1,5 @@
 const {Machine} = require('../models/machine');
-
+const publishController = require('./mqttControllers/publishController');
 
 exports.refillMachine = async (req, res) => {
     try{
@@ -21,6 +21,8 @@ exports.refillMachine = async (req, res) => {
         product.quantity = newQuantity;
 
         await machine.save();
+
+        publishController.publishMessage(`machine/refill/${machineId}` , JSON.stringify({productId , newQuantity}));
 
         res.status(200).json({message : "Machine refilled successfully"});
     } catch(err){
