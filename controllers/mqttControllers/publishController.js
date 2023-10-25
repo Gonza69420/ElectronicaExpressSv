@@ -7,8 +7,6 @@ mqttClient.on('connect', () => {
 });
 
 exports.publishMessage = (topic , message) => {
-    const { topic, message } = req.body;
-
     mqttClient.publish(topic, message, (err) => {
         if (err) {
             console.error('Error publishing MQTT message:', err);

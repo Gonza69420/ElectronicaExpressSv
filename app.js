@@ -21,23 +21,9 @@ app.use(bodyParser.json());
 
 //Routes
 const adminRoutes = require('./routes/adminRoute');
-const mqttRoutes = require('./routes/mqtt');
 const maintenanceRoutes = require('./routes/maintenanceRoute');
 
 app.use('/admin', adminRoutes);
-app.use('/mqtt', mqttRoutes);
 app.use('/maintenance', maintenanceRoutes);
-
-
-//iniciar MQTT
-const mqttClient = mqtt.connect('mqtt://localhost:1883'); //Ejemplo hasta que sepamos cual es
-
-mqttClient.on('connect', () => {
-    console.log('Conectado al broker MQTT');
-})
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
 
 module.exports = app;

@@ -1,21 +1,21 @@
 const mongoose = require('mongoose');
 
 const productQuantitySchema = new mongoose.Schema({
-    productId : number,
-    quantity : number,
+    productId : Number,
+    quantity : Number,
 })
 
 const machineSchema = new mongoose.Schema({
     works : {
-        type : boolean,
+        type : Boolean,
         default: false
     },
     beingRepaired : {
-        type : boolean,
+        type : Boolean,
         default : false,
     },
     income : {
-        type : number,
+        type : Number,
         default : 0,
     },
     products : {
