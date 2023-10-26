@@ -22,8 +22,10 @@ app.use(bodyParser.json());
 //Routes
 const adminRoutes = require('./routes/adminRoute');
 const maintenanceRoutes = require('./routes/maintenanceRoute');
+const userRoute = require('./routes/userRoute');
 
 app.use('/admin', adminRoutes);
 app.use('/maintenance', maintenanceRoutes);
+app.use('/user', userRoute);
 
 module.exports = app;

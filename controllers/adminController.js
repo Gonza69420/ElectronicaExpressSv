@@ -2,6 +2,8 @@ const {Machine} = require("../models/machine");
 const { User , Role } = require("../models/user");
 const {Product } = require("../models/product");
 const publishController = require('./mqttControllers/publishController');
+const bcrypt = require('bcrypt');
+const {authenticateJWT} = require('../JWT/protectRoutes');
 
 exports.addMachine = async (req, res) => {
     try{
@@ -71,14 +73,25 @@ exports.addMaintenanceStaff = async (req, res) => {
             return res.status(400).json({ message: 'Role not found' });
         }
 
-        const user = new User({
-            username,
-            password,
-            name,
-            role: role._id,
-        });
 
-        await user.save();
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(password, salt, async (err, hash) => {
+              if (err) {
+                  res.status(500).json({ message: 'Error creating the user', err });
+              } else {
+                  const user = new User({
+                      username,
+                      hash,
+                      name,
+                      role: role._id,
+                  });
+
+                  await user.save();
+              }
+          })
+        })
+
+
 
         res.status(201).json({ message: 'User created successfully', user });
     } catch (error) {

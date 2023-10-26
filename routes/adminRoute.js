@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+import {authenticateJWT} from "../JWT/protectRoutes";
+
+router.use(authenticateJWT("admin")); //MiddleWare
 
 router.post('/addMachine', adminController.addMachine);
 
