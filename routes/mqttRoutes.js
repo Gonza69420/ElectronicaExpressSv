@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 const mqttClient = mqtt.connect('mqtt://localhost:1883');
 const subscribeController = require('../controllers/mqttControllers/subscribeController');
 
-const topics = ['soldProduct' , 'machine/broke' , 'machine/working' , 'machine/ready', 'machine/Connected'];
+const topics = ['soldProduct' , 'machine/broke' , 'machine/working' , 'machine/ready', 'machine/connected'];
 
 mqttClient.on('connect', () => {
     console.log('Connected to the MQTT broker');

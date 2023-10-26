@@ -50,10 +50,10 @@ exports.machineBroken = async (message) => {
         const jsonMessage = JSON.parse(message);
 
         // message = {
-        //     machine: <Machine>
+        //     machineId: number
         // }
 
-        const machine = await Machine.findOne({_id : jsonMessage.machine.id});
+        const machine = await Machine.findOne({_id : jsonMessage.machineId});
 
         if (!machine){
             throw new Error("Machine not found");
@@ -74,10 +74,10 @@ exports.machineWorking = async (message) => {
         const jsonMessage = JSON.parse(message);
 
         // message = {
-        //     machine: <Machine>
+        //     machineId: number
         // }
 
-        const machine = await Machine.findOne({_id : jsonMessage.machine.id});
+        const machine = await Machine.findOne({_id : jsonMessage.machineId});
 
         if (!machine){
             throw new Error("Machine not found");
@@ -98,10 +98,10 @@ exports.machineReady = async (message) => {
         const jsonMessage = JSON.parse(message);
 
         // message = {
-        //     machine: <Machine>
+        //     machineId: number
         // }
 
-        const machine = await Machine.findOne({_id : jsonMessage.machine.id});
+        const machine = await Machine.findOne({_id : jsonMessage.machineId});
 
         if (!machine){
             throw new Error("Machine not found");
@@ -122,7 +122,7 @@ exports.machineConnected = async (message) => {
         const jsonMessage = JSON.parse(message);
 
         // message = {
-        //     machine: id
+        //     machineId: id
         // }
 
         const machine = await Machine.findOne({_id : jsonMessage.machineId});
