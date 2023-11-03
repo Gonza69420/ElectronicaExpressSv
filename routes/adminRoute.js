@@ -15,13 +15,13 @@ router.get('/getAllMachines' , adminController.getAllMachines);
 
 router.post('/addMaintenanceStaff' , adminController.addMaintenanceStaff);
 
-router.post('/deleteMaintenanceStaff/:maintenanceId' , adminController.deleteMaintenanceStaff);
+router.delete('/deleteMaintenanceStaff/:maintenanceId' , adminController.deleteMaintenanceStaff);
 
 router.get('/getMachine/:machineId' , adminController.getMachine);
 
 router.get('/getTotalIncome' , adminController.getTotalIncome);
 
-router.post('/adjustPrice/:productId' , adminController.adjustProductPrice);
+router.put('/adjustPrice/:productId' , adminController.adjustProductPrice);
 
 router.post('/addProduct' , adminController.addProduct);
 
