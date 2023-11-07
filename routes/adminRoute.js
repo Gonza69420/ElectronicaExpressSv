@@ -27,4 +27,12 @@ router.post('/addProduct' , adminController.addProduct);
 
 router.delete('/deleteProduct/:productId' , adminController.deleteProduct);
 
+router.get('/getProduct/:productId' , adminController.getProduct);
+
+router.get('/getAllProducts' , adminController.getAllProducts);
+
+router.get('/getMaintenanceStaff/:maintenanceId' , adminController.getMaintenanceStaff);
+
+router.get('/allMaintenanceStaff' , adminController.allMaintenanceStaff);
+
 module.exports = router;
