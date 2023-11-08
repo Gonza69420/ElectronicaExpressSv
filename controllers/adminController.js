@@ -3,7 +3,7 @@ const {User, Role} = require("../models/user");
 const {Product} = require("../models/product");
 const publishController = require('./mqttControllers/publishController');
 const bcrypt = require('bcrypt');
-const {authenticateJWT} = require('../JWT/protectRoutes');
+const authenticateJWT = require('../JWT/protectRoutes.js');
 
 
 exports.addMachine = async (req, res) => {

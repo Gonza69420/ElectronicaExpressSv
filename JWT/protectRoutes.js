@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../.config.js');
 const {User} = require('../models/user');
 // Middleware to protect routes
-export function authenticateJWT(role) {
+function authenticateJWT(role) {
     return function (req , res , next) {
         const token = req.headers.authorization;
 
@@ -30,6 +30,10 @@ export function authenticateJWT(role) {
         } );
     }
 }
+
+module.exports = {
+    authenticateJWT
+};
 
 
 

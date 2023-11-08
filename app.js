@@ -2,9 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
+const config = require('./.config.js');
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB, {
+mongoose.connect(config.mongodbURL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -20,7 +21,7 @@ app.use(bodyParser.json());
 
 
 //Routes
-const adminRoutes = require('./routes/adminRoute');
+const adminRoutes = require('./routes/adminRoute.js');
 const maintenanceRoutes = require('./routes/maintenanceRoute');
 const userRoute = require('./routes/userRoute');
 

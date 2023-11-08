@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const maintenanceController = require('../controllers/maintenanceController');
 const adminController = require('../controllers/adminController');
-import {authenticateJWT} from "../JWT/protectRoutes";
+const {authenticateJWT} = require("../JWT/protectRoutes");
 
 router.use(authenticateJWT("maintenance")); //MiddleWare
 
