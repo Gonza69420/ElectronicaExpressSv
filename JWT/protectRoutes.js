@@ -15,7 +15,7 @@ function authenticateJWT(role) {
                 return res.status(401).json({ error: 'Invalid token' });
             }
 
-            const userr = User.findById(user.userId);
+            const userr = await User.findById(user.userId);
 
             if (!userr){
                 return res.status(404).json({error : "User not found"});
