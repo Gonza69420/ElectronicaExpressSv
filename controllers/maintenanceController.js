@@ -8,13 +8,13 @@ exports.refillMachine = async (req, res) => {
 
         const machine = await Machine.findById(machineId);
 
-        if (!machine){
+        if (machine == null){
             return res.status(404).json({error : "Machine not found"});
         }
 
         const product = machine.products.find(product => product.productId === productId);
 
-        if (!product){
+        if (product == null){
             return res.status(404).json({error : "Product not found"});
         }
 
@@ -36,7 +36,7 @@ exports.workingInMachine = async (req, res) => {
 
         const machine = await Machine.findById(machineId);
 
-        if (!machine){
+        if (machine == null){
             return res.status(404).json({error : "Machine not found"});
         }
 
@@ -56,7 +56,7 @@ exports.machineReady = async (req, res) => {
 
         const machine = await Machine.findById(machineId);
 
-        if (!machine) {
+        if (machine == null) {
             return res.status(404).json({error: "Machine not found"});
         }
 

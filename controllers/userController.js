@@ -5,9 +5,9 @@ const config = require('../.config.js');
 
 exports.login = async (req, res) => {
 
-    const user = await User.findOne({username : req.body.username});
+    const user = await User.findOne({username : req.body.username.toString()});
 
-    if (!user){
+    if (user == null){
         return res.status(404).json({error : "User not found"});
     }
 

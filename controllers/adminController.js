@@ -24,7 +24,7 @@ exports.deleteMachine = async (req, res) => {
 
         const result = await Machine.findOneAndRemove({_id: machineId});
 
-        if (!result) {
+        if (result == null) {
             return res.status(404).json({error: "Machine not found"});
         }
 
@@ -42,7 +42,7 @@ exports.getIncome = async (req, res) => {
 
         const machine = await Machine.findOne({_id: machineId});
 
-        if (!machine) {
+        if (machine == null) {
             return res.status(404).json({error: "Machine not found"});
         }
 
@@ -70,7 +70,7 @@ exports.addMaintenanceStaff = async (req, res) => {
 
         const role = await Role.findOne({name: 'Maintenance'});
 
-        if (!role) {
+        if (role == null) {
             return res.status(400).json({message: 'Role not found'});
         }
 
@@ -105,7 +105,7 @@ exports.deleteMaintenanceStaff = async (req, res) => {
 
         const result = await User.findOneAndRemove({_id: maintenanceId});
 
-        if (!result) {
+        if (result == null) {
             return res.status(404).json({error: "Maintenance not found"});
         }
 
@@ -122,7 +122,7 @@ exports.getMachine = async (req, res) => {
 
         const machine = await Machine.findOne({_id: machineId});
 
-        if (!machine) {
+        if (machine == null) {
             return res.status(404).json({error: "Machine not found"});
         }
 
@@ -153,7 +153,7 @@ exports.adjustProductPrice = async (req, res) => {
 
         const product = await Product.findOne({_id: productId});
 
-        if (!product) {
+        if (product == null) {
             return res.status(404).json({error: "Product not found"});
         }
 
@@ -194,7 +194,7 @@ exports.deleteProduct = async (req, res) => {
 
         const product = await Product.findByIdAndDelete(productId);
 
-        if (!product) {
+        if (product == null) {
             return res.status(404).json({error: "Product not found"});
         }
 
@@ -212,7 +212,7 @@ exports.getProduct = async (req, res) => {
 
         const product = await Product.findById(productId);
 
-        if (!product) {
+        if (product == null) {
             return res.status(404).json({error: "Product not found"});
         }
 
@@ -240,7 +240,7 @@ exports.getMaintenanceStaff = async (req, res) => {
 
         const user = User.find({role: role, _id: maintenanceId});
 
-        if (!user) {
+        if (user == null) {
             return res.status(404).json({error: "Maintenance not found"});
         }
 

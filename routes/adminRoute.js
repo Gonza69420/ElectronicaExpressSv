@@ -3,7 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 const {authenticateJWT} = require("../JWT/protectRoutes");
 
-router.use(authenticateJWT("admin")); //MiddleWare
+router.use(authenticateJWT("Admin")); //MiddleWare
 
 router.post('/addMachine', adminController.addMachine);
 
