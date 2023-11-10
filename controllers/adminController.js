@@ -1,6 +1,5 @@
-const {Machine} = require("../models/machine");
+const {Machine , Product} = require("../models/machine");
 const {User, Role} = require("../models/user");
-const {Product} = require("../models/product");
 const publishController = require('./mqttControllers/publishController');
 const bcrypt = require('bcrypt');
 const authenticateJWT = require('../JWT/protectRoutes.js');
@@ -22,15 +21,15 @@ exports.deleteMachine = async (req, res) => {
     try {
         const {machineId} = req.params;
 
-        const result = await Machine.findOneAndRemove({_id: machineId});
+        const result = await Machine.findOneAndRemove({customId: machineId});
 
         if (result == null) {
             return res.status(404).json({error: "Machine not found"});
         }
 
-        res.status(200).json({message: "Machine deleted successfully"});
-
         publishController.publishMessage(`machine/delete/${machineId}`, `delete`);
+
+        res.status(200).json({message: "Machine deleted successfully"});
     } catch (err) {
         res.status(500).json({error: err.message});
     }
@@ -40,7 +39,7 @@ exports.getIncome = async (req, res) => {
     try {
         const {machineId} = req.params;
 
-        const machine = await Machine.findOne({_id: machineId});
+        const machine = await Machine.findOne({customId: machineId});
 
         if (machine == null) {
             return res.status(404).json({error: "Machine not found"});
@@ -48,7 +47,7 @@ exports.getIncome = async (req, res) => {
 
         const income = machine.income;
 
-        res.status(200).json({income});
+        res.status(200).json({data : income});
     } catch (err) {
         res.status(500).json({error: err.message});
     }
@@ -58,7 +57,7 @@ exports.getAllMachines = async (req, res) => {
     try {
         const machines = await Machine.find({});
 
-        res.status(200).json({machines});
+        res.status(200).json({ data: { machines } });
     } catch (err) {
         res.status(500).json({error: err.message});
     }
@@ -66,92 +65,90 @@ exports.getAllMachines = async (req, res) => {
 
 exports.addMaintenanceStaff = async (req, res) => {
     try {
-        const {username, password, name} = req.body;
+        const { username, password, name } = req.body;
 
-        const role = await Role.findOne({name: 'Maintenance'});
+        const role = await Role.findOne({ name: 'Maintenance' });
 
         if (role == null) {
-            return res.status(400).json({message: 'Role not found'});
+            return res.status(400).json({ message: 'Role not found' });
         }
 
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
 
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(password, salt, async (err, hash) => {
-                if (err) {
-                    res.status(500).json({message: 'Error creating the user', err});
-                } else {
-                    const user = new User({
-                        username,
-                        hash,
-                        name,
-                        role: role._id,
-                    });
+        const user = new User({
+            username,
+            password: hash,
+            name,
+            role: role,
+        });
 
-                    await user.save();
-                }
-            })
-        })
+        await user.save();
 
-        res.status(201).json({message: 'User created successfully', user});
+        res.status(201).json({ message: 'User created successfully', user });
     } catch (error) {
-        res.status(500).json({message: 'Error creating the user', error});
+        console.error(error);
+        res.status(500).json({ message: 'Error creating the user' });
     }
-}
+};
 
 
 exports.deleteMaintenanceStaff = async (req, res) => {
     try {
-        const {maintenanceId} = req.params
+        const { maintenanceId } = req.params;
 
-        const result = await User.findOneAndRemove({_id: maintenanceId});
+        const result = await User.deleteOne({ customId: maintenanceId });
 
-        if (result == null) {
-            return res.status(404).json({error: "Maintenance not found"});
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ error: 'Maintenance not found' });
         }
 
-        res.status(200).json({message: "Maintenance deleted successfully"});
+        res.status(200).json({ message: 'Maintenance deleted successfully' });
     } catch (err) {
-        res.status(500).json({error: err.message});
+        res.status(500).json({ error: err.message });
     }
-}
+};
+
 
 
 exports.getMachine = async (req, res) => {
     try {
-        const {machineId} = req.params;
+        const { machineId } = req.params;
 
-        const machine = await Machine.findOne({_id: machineId});
+        const machine = await Machine.findOne({ customId: machineId });
 
         if (machine == null) {
-            return res.status(404).json({error: "Machine not found"});
+            return res.status(404).json({ error: 'Machine not found' });
         }
 
-        res.status(200).json({machine});
-
+        // Success response
+        res.status(200).json({ data: { machine } });
     } catch (err) {
-        res.status(500).json({error: err.message});
+        res.status(500).json({ error: err.message });
     }
-}
+};
+
 
 exports.getTotalIncome = async (req, res) => {
     try {
-        // Utiliza la función `find` para obtener todos los documentos de Machine
-        const machines = await Machine.find({}, 'income'); // Proyecta solo el campo 'income'
+        const machines = await Machine.find({}, 'income');
 
-        const totalIncome = machines.reduce((total, machine) => total + machine.income, 0);
+        const totalIncome = machines.reduce((total, machine) => total + (machine.income || 0), 0);
 
-        res.status(200).json({totalIncome});
+        // Success response
+        res.status(200).json({ data: { totalIncome } });
     } catch (error) {
-        res.status(500).json({message: 'Error al obtener el ingreso de las máquinas', error});
+        res.status(500).json({ error: 'Error al obtener el ingreso de las máquinas', details: error.message });
     }
-}
+};
+
 
 exports.adjustProductPrice = async (req, res) => {
     try {
         const {productId} = req.params;
         const {newPrice} = req.body;
 
-        const product = await Product.findOne({_id: productId});
+        const product = await Product.findOne({customId: productId});
 
         if (product == null) {
             return res.status(404).json({error: "Product not found"});
@@ -161,9 +158,9 @@ exports.adjustProductPrice = async (req, res) => {
 
         await product.save();
 
-        res.status(200).json({message: "Product price adjusted successfully"});
+        publishController.publishMessage(`product/adjustPrice/${productId}`, `{ newPrice: ${newPrice} }`);
 
-        publishController.publishMessage(`product/adjustPrice/`, `{newPrice}`);
+        res.status(200).json({message: "Product price adjusted successfully"});
     } catch (err) {
         res.status(500).json({error: err.message});
     }
@@ -180,9 +177,8 @@ exports.addProduct = async (req, res) => {
 
         const savedProduct = await newProduct.save();
 
-        publishController.publishMessage(`product/add`, JSON.stringify(savedProduct));
 
-        res.status(201).json({message: "Product added successfully"}, savedProduct);
+        res.status(201).json({message: "Product added successfully", data: savedProduct});
     } catch (err) {
         res.status(500).json({error: err.message});
     }
@@ -190,43 +186,48 @@ exports.addProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
     try {
-        const {productId} = req.params;
+        const { productId } = req.params;
 
-        const product = await Product.findByIdAndDelete(productId);
+        const product = await Product.findOne({ customId: productId });
 
         if (product == null) {
-            return res.status(404).json({error: "Product not found"});
+            return res.status(404).json({ error: 'Product not found' });
         }
 
-        publishController.publishMessage(`product/delete`, `${productId}`);
+        // Publish Message with more details
+        publishController.publishMessage('product/delete', JSON.stringify({ productId }));
 
-        res.status(200).json({message: "Product deleted successfully"});
+        // Success response
+        res.status(200).json({ message: 'Product deleted successfully' });
     } catch (err) {
-        res.status(500).json({error: err.message});
+        res.status(500).json({ error: err.message });
     }
-}
+};
+
 
 exports.getProduct = async (req, res) => {
     try {
-        const {productId} = req.params;
+        const { productId } = req.params;
 
-        const product = await Product.findById(productId);
+        const product = await Product.findOne({ customId: productId });
 
         if (product == null) {
-            return res.status(404).json({error: "Product not found"});
+            return res.status(404).json({ error: 'Product not found' });
         }
 
-        res.status(200).json({product});
+        // Success response
+        res.status(200).json({ data: { product } });
     } catch (err) {
-        res.status(500).json({error: err.message});
+        res.status(500).json({ error: err.message });
     }
-}
+};
+
 
 exports.getAllProducts = async (req, res) => {
     try {
         const products = await Product.find({});
 
-        res.status(200).json({products});
+        res.status(200).json({ data: { products } });
     } catch (err) {
         res.status(500).json({error: err.message});
     }
@@ -234,30 +235,31 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getMaintenanceStaff = async (req, res) => {
     try {
-        const {maintenanceId} = req.params;
+        const { maintenanceId } = req.params;
 
-        const role = Role.find({name: 'Maintenance'});
+        const role = await Role.find({ name: 'Maintenance' });
+        const user = await User.find({ role: role, customId: maintenanceId });
 
-        const user = User.find({role: role, _id: maintenanceId});
-
-        if (user == null) {
-            return res.status(404).json({error: "Maintenance not found"});
+        if (user == null ) {
+            return res.status(404).json({ error: 'Maintenance not found' });
         }
 
-        res.status(200).json({user});
+        // Success response
+        res.status(200).json({ data: { user } });
     } catch (err) {
-        res.status(500).json({error: err.message});
+        res.status(500).json({ error: err.message });
     }
-}
+};
+
 
 exports.allMaintenanceStaff = async (req, res) => {
     try {
-        const role = Role.find({name: 'Maintenance'});
+        const role = await Role.find({ name: 'Maintenance' });
+        const users = await User.find({ role: role });
 
-        const users = await User.find({role: role});
-
-        res.status(200).json({users});
+        // Success response
+        res.status(200).json({ data: { users } });
     } catch (err) {
-        res.status(500).json({error: err.message});
+        res.status(500).json({ error: err.message });
     }
-}
+};

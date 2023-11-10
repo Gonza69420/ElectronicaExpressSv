@@ -1,24 +1,23 @@
-const { Machine } = require('../../models/machine');
-const { Product } = require('../../models/product');
+const { Machine, Product } = require('../../models/machine');
 const publishController = require('../mqttControllers/publishController');
 exports.soldProduct = async (message) => {
     try{
         const jsonMessage = JSON.parse(message);
 
         // message = {
-        //     machine: <Machine>
+        //     machineId: number
         //     productId: number
         // }
 
-        const machine = await Machine.findOne({_id : jsonMessage.machine.id});
+        const machine = await Machine.findOne({customId : jsonMessage.machineId});
 
-        if (!machine){
+        if (machine == null){
             throw new Error("Machine not found");
         }
 
-        const product = await Product.findOne({_id : jsonMessage.productId});
+        const product = await Product.findOne({customId : jsonMessage.productId});
 
-        if (!product){
+        if (product == null){
             throw new Error("Product not found");
         }
 
@@ -53,9 +52,9 @@ exports.machineBroken = async (message) => {
         //     machineId: number
         // }
 
-        const machine = await Machine.findOne({_id : jsonMessage.machineId});
+        const machine = await Machine.findOne({customId : jsonMessage.machineId});
 
-        if (!machine){
+        if (machine == null){
             throw new Error("Machine not found");
         }
 
@@ -69,54 +68,6 @@ exports.machineBroken = async (message) => {
     }
 }
 
-exports.machineWorking = async (message) => {
-    try{
-        const jsonMessage = JSON.parse(message);
-
-        // message = {
-        //     machineId: number
-        // }
-
-        const machine = await Machine.findOne({_id : jsonMessage.machineId});
-
-        if (!machine){
-            throw new Error("Machine not found");
-        }
-
-        machine.works = true;
-
-        await machine.save();
-
-        console.log(`Machine working`);
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-exports.machineReady = async (message) => {
-    try{
-        const jsonMessage = JSON.parse(message);
-
-        // message = {
-        //     machineId: number
-        // }
-
-        const machine = await Machine.findOne({_id : jsonMessage.machineId});
-
-        if (!machine){
-            throw new Error("Machine not found");
-        }
-
-        machine.works = false;
-
-        await machine.save();
-
-        console.log(`Machine ready`);
-    } catch (err) {
-        console.log(err);
-    }
-}
-
 exports.machineConnected = async (message) => {
     try{
         const jsonMessage = JSON.parse(message);
@@ -125,9 +76,9 @@ exports.machineConnected = async (message) => {
         //     machineId: id
         // }
 
-        const machine = await Machine.findOne({_id : jsonMessage.machineId});
+        const machine = await Machine.findOne({customId : jsonMessage.machineId});
 
-        if (!machine){
+        if (machine == null){
             throw new Error("Machine not found");
         }
 
