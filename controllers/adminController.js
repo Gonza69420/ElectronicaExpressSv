@@ -12,7 +12,7 @@ exports.addMachine = async (req, res) => {
 
         const savedMachine = await newMachine.save();
 
-        res.status(201).json({message: "Machine added successfully"}, savedMachine);
+        res.status(201).json({ message: "Machine added successfully", machine: savedMachine });
     } catch (err) {
         res.status(500).json({error: err.message});
     }

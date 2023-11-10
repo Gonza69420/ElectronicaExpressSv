@@ -22,6 +22,15 @@ const machineSchema = new mongoose.Schema({
         type : [productQuantitySchema],
         default : [],
     },
+    customId : {type : Number, unique: true}
 })
+
+machineSchema.pre('save', async function (next) {
+    if (!this.customId) {
+        const lastMachine = await this.constructor.findOne({}, { customId: 1 }).sort({ customId: -1 });
+        this.customId = lastMachine ? lastMachine.customId + 1 : 1;
+    }
+    next();
+});
 
 module.exports.Machine = mongoose.model('Machine', machineSchema);
