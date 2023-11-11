@@ -21,18 +21,41 @@ exports.refillMachine = async (req, res) => {
         //const product = machine.products.find(product => product.customId === productId);
         const productInsideMachine = machine.products.find(product => product.product.customId === productId);
 
-        if (!productInsideMachine) {
-            return res.status(404).json({ error: 'Product not found in the machine' });
-        }
+        if (productInsideMachine == null) {
+            // If the product is not found, add it to the machine
+            const productToAdd = await Product.findOne({ customId: productId });
 
-        productInsideMachine.quantity = newQuantity;
+            if (!productToAdd) {
+                return res.status(404).json({ error: 'Product not found' });
+            }
+
+            machine.products.push({
+                product: productToAdd,
+                quantity: newQuantity,
+            });
+        } else {
+            // If the product is found, update its quantity
+            productInsideMachine.quantity = newQuantity;
+        }
 
         // Ensure to await the save operation
         await machine.save();
 
+        // Use a more structured message payload with machine products
+        const messagePayload = {
+            machineId,
+            products: machine.products.map(productInfo => ({
+                productId: productInfo.product.customId,
+                productName: productInfo.product.name,
+                quantity: productInfo.quantity,
+            })),
+        };
 
-        // Use a more structured message payload
-        publishController.publishMessage(`machine/refill/${machineId}`, { productId, newQuantity });
+        // Stringify the message payload
+        const jsonStringPayload = JSON.stringify(messagePayload);
+
+        // Publish the message with the updated payload
+        publishController.publishMessage(`machine/refill/${machineId}`, jsonStringPayload);
 
         // Success response
         res.status(200).json({ message: 'Machine refilled successfully' });
@@ -52,7 +75,7 @@ exports.workingInMachine = async (req, res) => {
             return res.status(404).json({error : "Machine not found"});
         }
 
-        machine.working = true;
+        machine.beingRepaired = true;
 
         await machine.save();
 
@@ -69,13 +92,14 @@ exports.machineReady = async (req, res) => {
     try {
         const { machineId } = req.params;
 
-        const machine = await Machine.findById(machineId);
+        const machine = await Machine.findOne({ customId: machineId });
 
         if (!machine) {
             return res.status(404).json({ error: 'Machine not found' });
         }
 
-        machine.working = false;
+        machine.working = true;
+        machine.beingRepaired = false;
 
         // Ensure to await the save operation
         await machine.save();
