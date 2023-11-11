@@ -75,6 +75,7 @@ exports.workingInMachine = async (req, res) => {
             return res.status(404).json({error : "Machine not found"});
         }
 
+        machine.works = false;
         machine.beingRepaired = true;
 
         await machine.save();
@@ -98,7 +99,7 @@ exports.machineReady = async (req, res) => {
             return res.status(404).json({ error: 'Machine not found' });
         }
 
-        machine.working = true;
+        machine.works = true;
         machine.beingRepaired = false;
 
         // Ensure to await the save operation
