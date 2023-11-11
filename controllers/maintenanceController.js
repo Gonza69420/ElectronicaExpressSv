@@ -1,4 +1,4 @@
-const {Machine} = require('../models/machine');
+const {Machine, Product} = require('../models/machine');
 const publishController = require('./mqttControllers/publishController');
 
 exports.refillMachine = async (req, res) => {
@@ -12,16 +12,24 @@ exports.refillMachine = async (req, res) => {
             return res.status(404).json({ error: 'Machine not found' });
         }
 
-        const product = machine.products.find(product => product.productId === productId);
+        const product = Product.findOne({customId : productId});
 
         if (product == null) {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        product.quantity = newQuantity;
+        //const product = machine.products.find(product => product.customId === productId);
+        const productInsideMachine = machine.products.find(product => product.product.customId === productId);
+
+        if (!productInsideMachine) {
+            return res.status(404).json({ error: 'Product not found in the machine' });
+        }
+
+        productInsideMachine.quantity = newQuantity;
 
         // Ensure to await the save operation
         await machine.save();
+
 
         // Use a more structured message payload
         publishController.publishMessage(`machine/refill/${machineId}`, { productId, newQuantity });
