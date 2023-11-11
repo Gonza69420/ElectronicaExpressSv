@@ -102,14 +102,23 @@ exports.deleteMaintenanceStaff = async (req, res) => {
     try {
         const { maintenanceId } = req.params;
 
+        // Get the user based on maintenanceId
+        const user = await User.findOne({ customId: maintenanceId });
+
+        if (user == null) {
+            return res.status(404).json({ error: 'Maintenance not found' });
+        }
+
+        // Check if the user has the role "Maintenance"
+        if (user.role.name !== 'Maintenance') {
+            return res.status(403).json({ error: 'Access denied. User does not have the required role.' });
+        }
+
+        // If the user has the correct role, proceed with deletion
         const result = await User.deleteOne({ customId: maintenanceId });
 
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Maintenance not found' });
-        }
-
-        if (user.role.name !== 'Maintenance') {
-            return res.status(403).json({ error: 'Access denied. User does not have the required role.' });
         }
 
         res.status(200).json({ message: 'Maintenance deleted successfully' });
@@ -117,6 +126,7 @@ exports.deleteMaintenanceStaff = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 
 
 
