@@ -70,8 +70,12 @@ exports.addMaintenanceStaff = async (req, res) => {
         const role = await Role.findOne({ name: 'Maintenance' });
 
         if (role == null) {
-            return res.status(400).json({ message: 'Role not found' });
+            const newRole = new Role({
+                name: 'Maintenance',
+            });
+            await newRole.save();
         }
+
 
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
