@@ -67,7 +67,7 @@ exports.addMaintenanceStaff = async (req, res) => {
     try {
         const { username, password, name } = req.body;
 
-        const role = await Role.findOne({ name: 'Maintenance' });
+        let role = await Role.findOne({ name: 'Maintenance' });
 
         if (role == null) {
             const newRole = new Role({
@@ -76,6 +76,7 @@ exports.addMaintenanceStaff = async (req, res) => {
             await newRole.save();
         }
 
+        role = await Role.findOne({ name: 'Maintenance' });
 
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
@@ -105,6 +106,10 @@ exports.deleteMaintenanceStaff = async (req, res) => {
 
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Maintenance not found' });
+        }
+
+        if (user.role.name !== 'Maintenance') {
+            return res.status(403).json({ error: 'Access denied. User does not have the required role.' });
         }
 
         res.status(200).json({ message: 'Maintenance deleted successfully' });
