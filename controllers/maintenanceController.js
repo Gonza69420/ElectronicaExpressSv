@@ -95,7 +95,7 @@ exports.machineReady = async (req, res) => {
 
         const machine = await Machine.findOne({ customId: machineId });
 
-        if (!machine) {
+        if (machine == null) {
             return res.status(404).json({ error: 'Machine not found' });
         }
 
@@ -114,3 +114,34 @@ exports.machineReady = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+exports.eliminateProductFromMachine = async (req, res) => {
+    try{
+        const { machineId , productId} = req.params;
+
+        const machine = await Machine.findOne({customId : machineId});
+
+        if (machine == null){
+            return res.status(404).json({error : "Machine not found"});
+        }
+
+        const product = machine.products.find(product => product.product.customId === productId);
+
+        if (product == null){
+            return res.status(404).json({error : "Product not found"});
+        }
+
+        const index = machine.products.findIndex(product => product.product.customId === productId);
+
+        machine.products.splice(index, 1);
+
+        await machine.save();
+
+        //publish message
+
+        res.status(200).json({message : "Product eliminated successfully"});
+
+    } catch(err){
+        res.status(500).json({error : err.message});
+    }
+}

@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 const mqttClient = mqtt.connect('mqtt://localhost:1883');
 const subscribeController = require('../controllers/mqttControllers/subscribeController');
 
-const topics = ['soldProduct' , 'machine/broke' , 'machine/working' , 'machine/ready', 'machine/connected'];
+const topics = ['soldProduct' , 'machine/broke', 'machine/connected'];
 
 mqttClient.on('connect', () => {
     console.log('Connected to the MQTT broker');
@@ -28,12 +28,6 @@ mqttClient.on('message' , (topic , message) => {
                 break;
             case 'machine/broke':
                 subscribeController.machineBroken(message);
-                break;
-            case 'machine/working':
-                subscribeController.machineWorking(message);
-                break;
-            case 'machine/ready':
-                subscribeController.machineReady(message);
                 break;
             case 'machine/Connected':
                 subscribeController.machineConnected(message);
