@@ -13,6 +13,6 @@ router.get('/getMachine/:machineId' , adminController.getMachine);
 router.get('/getAllMachines' , adminController.getAllMachines);
 router.get('/getProduct/:productId' , adminController.getProduct);
 router.get('/getAllProducts' , adminController.getAllProducts);
-router.put('eliminateProductFromMachine/:machineId/:productId' , maintenanceController.eliminateProductFromMachine);
+router.put('/eliminateProductFromMachine/:machineId/:productId' , maintenanceController.eliminateProductFromMachine);
 
 module.exports = router;
