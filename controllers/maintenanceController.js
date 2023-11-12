@@ -19,7 +19,7 @@ exports.refillMachine = async (req, res) => {
         }
 
         //const product = machine.products.find(product => product.customId === productId);
-        const productInsideMachine = machine.products.find(product => product.product.customId === productId);
+        const productInsideMachine = machine.products.find(product => product.product.customId.toString() === productId);
 
         if (productInsideMachine == null) {
             // If the product is not found, add it to the machine
@@ -125,13 +125,13 @@ exports.eliminateProductFromMachine = async (req, res) => {
             return res.status(404).json({error : "Machine not found"});
         }
 
-        const product = machine.products.find(product => product.product.customId === productId);
+        const product = machine.products.find(product => product.product.customId.toString() === productId);
 
         if (product == null){
             return res.status(404).json({error : "Product not found"});
         }
 
-        const index = machine.products.findIndex(product => product.product.customId === productId);
+        const index = machine.products.findIndex(product => product.product.customId.toString() === productId);
 
         machine.products.splice(index, 1);
 
