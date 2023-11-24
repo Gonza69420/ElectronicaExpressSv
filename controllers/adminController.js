@@ -177,7 +177,7 @@ exports.adjustProductPrice = async (req, res) => {
 
         await product.save();
 
-        publishController.publishMessage(`product/adjustPrice/${productId}`, `{ newPrice: ${newPrice} }`);
+        publishController.publishMessage(`product/adjustPrice/${productId}`, JSON.stringify(product));
 
         res.status(200).json({message: "Product price adjusted successfully"});
     } catch (err) {
@@ -195,7 +195,6 @@ exports.addProduct = async (req, res) => {
         });
 
         const savedProduct = await newProduct.save();
-
 
         res.status(201).json({message: "Product added successfully", data: savedProduct});
     } catch (err) {

@@ -51,11 +51,8 @@ exports.refillMachine = async (req, res) => {
             })),
         };
 
-        // Stringify the message payload
-        const jsonStringPayload = JSON.stringify(messagePayload);
-
         // Publish the message with the updated payload
-        publishController.publishMessage(`machine/refill/${machineId}`, jsonStringPayload);
+        publishController.publishMessage(`machine/refill/${machineId}`, JSON.stringify(messagePayload));
 
         // Success response
         res.status(200).json({ message: 'Machine refilled successfully' });
