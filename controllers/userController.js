@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const {User} = require('../models/user');
+const {User, Role} = require('../models/user');
 const jwt = require('jsonwebtoken');
 const config = require('../.config.js');
 
@@ -15,6 +15,10 @@ exports.login = async (req, res) => {
 
     if (!validPassword){
         return res.status(400).json({error : "Invalid password"});
+    }
+
+    if (user.role.name.toString() !== req.body.role.toString()) {
+        return res.status(401).json({ error: 'Unauthorized for role' });
     }
 
     const token = jwt.sign({ userId: user._id }, config.secretKey, {
