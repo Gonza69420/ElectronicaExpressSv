@@ -177,7 +177,7 @@ exports.adjustProductPrice = async (req, res) => {
 
         await product.save();
 
-        publishController.publishMessage(`product/adjustPrice/${productId}`, JSON.stringify(product));
+        publishController.publishMessage(`product/adjustPrice`, JSON.stringify(product));
 
         res.status(200).json({message: "Product price adjusted successfully"});
     } catch (err) {

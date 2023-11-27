@@ -41,18 +41,8 @@ exports.refillMachine = async (req, res) => {
         // Ensure to await the save operation
         await machine.save();
 
-        // Use a more structured message payload with machine products
-        const messagePayload = {
-            machineId,
-            products: machine.products.map(productInfo => ({
-                productId: productInfo.product.customId,
-                productName: productInfo.product.name,
-                quantity: productInfo.quantity,
-            })),
-        };
-
         // Publish the message with the updated payload
-        publishController.publishMessage(`machine/refill/${machineId}`, JSON.stringify(messagePayload));
+        publishController.publishMessage(`machine/refill/${machineId}`, JSON.stringify(machine));
 
         // Success response
         res.status(200).json({ message: 'Machine refilled successfully' });
@@ -135,6 +125,7 @@ exports.eliminateProductFromMachine = async (req, res) => {
         await machine.save();
 
         //publish message
+        publishController.publishMessage(`machine/eliminate/${machineId}`, JSON.stringify(machine));
 
         res.status(200).json({message : "Product eliminated successfully"});
 
