@@ -8,7 +8,7 @@ mqttClient.on('connect', () => {
     console.log('Connected to the MQTT broker');
 
     topics.forEach(topic => {
-        mqttClient.subscribe(topic, (err) => {
+        mqttClient.subscribe("AustralFI/inel11/" + topic, (err) => {
             if (err) {
                 console.error(`Error subscribing to topic ${topic}: ${err}`);
             } else {
@@ -23,13 +23,13 @@ mqttClient.on('message' , (topic , message) => {
         console.log(`Received message on topic ${topic}: ${message}`);
 
         switch (topic) {
-            case 'soldProduct':
+            case 'AustralFI/inel11/soldProduct':
                 subscribeController.soldProduct(message);
                 break;
-            case 'machine/broke':
+            case 'AustralFI/inel11/machine/broke':
                 subscribeController.machineBroken(message);
                 break;
-            case 'machine/Connected':
+            case 'AustralFI/inel11/machine/Connected':
                 subscribeController.machineConnected(message);
                 break;
             default:
