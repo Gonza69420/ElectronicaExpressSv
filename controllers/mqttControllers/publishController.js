@@ -1,6 +1,12 @@
 const mqtt = require('mqtt');
+const fs = require('fs');
 
-const mqttClient = mqtt.connect('mqtt://localhost:1883');
+
+const options = {
+    ca: fs.readFileSync('/ca-root-cert.crt'),
+};
+
+const mqttClient = mqtt.connect('mqtt://localhost:1883', options);
 
 mqttClient.on('connect', () => {
     console.log('Connected to the MQTT broker');
