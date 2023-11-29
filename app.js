@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const config = require('./.config.js');
 const bcrypt = require('bcrypt');
+const mqttRoutes = require('./routes/mqttRoutes');
 
 // Connect to MongoDB
 mongoose.connect(config.mongodbURL, {
@@ -30,6 +31,7 @@ const {Role, User} = require("./models/user");
 app.use('/admin', adminRoutes);
 app.use('/maintenance', maintenanceRoutes);
 app.use('/user', userRoute);
+
 
 app.post('/createAdmin', async (req, res) => {
     try {

@@ -1,23 +1,18 @@
 const mqtt = require('mqtt');
-const fs = require('fs');
 
 
-const options = {
-    ca: fs.readFileSync('/ca-root-cert.crt'),
-};
-
-const mqttClient = mqtt.connect('mqtt://localhost:1883', options);
+const mqttClient = mqtt.connect('mqtt://34.200.138.102:1883');
 
 mqttClient.on('connect', () => {
     console.log('Connected to the MQTT broker');
 });
 
 exports.publishMessage = (topic , message) => {
-    mqttClient.publish(topic, message, (err) => {
+    mqttClient.publish("AustralFI/inel11/" + topic, message, (err) => {
         if (err) {
             console.error('Error publishing MQTT message:', err);
         } else {
-            console.log(`Published MQTT message on topic ${topic}: ${message}`);
+            console.log(`Published MQTT message on topic AustralFI/inel11/${topic}: ${message}`);
         }
     });
 };

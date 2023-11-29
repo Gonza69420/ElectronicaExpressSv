@@ -1,14 +1,14 @@
 const mqtt = require('mqtt');
-const mqttClient = mqtt.connect('mqtt://localhost:1883');
+const mqttClient = mqtt.connect('mqtt://34.200.138.102:1883');
 const subscribeController = require('../controllers/mqttControllers/subscribeController');
 
-const topics = ['soldProduct' , 'machine/broke', 'machine/connected'];
+const topics = ['soldProducts' , 'machine/broke', 'machine/connected'];
 
 mqttClient.on('connect', () => {
     console.log('Connected to the MQTT broker');
 
     topics.forEach(topic => {
-        mqttClient.subscribe("AustralFI/inel11/" + topic, (err) => {
+        mqttClient.subscribe("AustralFI/inel11/03/" + topic, (err) => {
             if (err) {
                 console.error(`Error subscribing to topic ${topic}: ${err}`);
             } else {
@@ -23,13 +23,13 @@ mqttClient.on('message' , (topic , message) => {
         console.log(`Received message on topic ${topic}: ${message}`);
 
         switch (topic) {
-            case 'AustralFI/inel11/soldProduct':
+            case 'AustralFI/inel11/03/soldProducts':
                 subscribeController.soldProduct(message);
                 break;
-            case 'AustralFI/inel11/machine/broke':
+            case 'AustralFI/inel11/03/machine/broke':
                 subscribeController.machineBroken(message);
                 break;
-            case 'AustralFI/inel11/machine/Connected':
+            case 'AustralFI/inel11/03/machine/connected':
                 subscribeController.machineConnected(message);
                 break;
             default:

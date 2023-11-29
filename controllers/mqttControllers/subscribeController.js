@@ -3,7 +3,7 @@ const publishController = require('../mqttControllers/publishController');
 exports.soldProduct = async (message) => {
     try{
         const jsonMessage = JSON.parse(message);
-
+        console.log("Estas vendiendo");
         // message = {
         //     machineId: number
         //     productId: number
@@ -87,7 +87,7 @@ exports.machineConnected = async (message) => {
         await machine.save();
 
         //pub Machine
-        publishController.publishMessage(`machine/Connected/${machine.id}`, JSON.stringify(machine));
+        publishController.publishMessage(`machine/Connected/${machine.customId}`, JSON.stringify(machine));
         console.log(`Machine connected`);
     } catch (err) {
         console.log(err);
